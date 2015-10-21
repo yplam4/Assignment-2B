@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://storage.googleapis.com/code.getmdl.io/1.0.5/material.min.js"></script>
+        <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.5/material.blue_grey-light_blue.min.css" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        
+        <style>
+            
+            #map {
+                position: absolute;
+                bottom: 100px;
+                left: 0%;
+                right: 0%;
+                margin: auto;
+    			width: 60%;
+    			height: 60%;
+                background-color: #CCC;
+            }
+            
+            body  {
+                background-image: url("ShiaDOIT.jpg");
+                background-color: white;
+                background-size: 100% 100%;
+                background-position: bottom;
+                background-repeat: no-repeat;
+            }
+            
+            #start_Record {
+                position: absolute;
+                margin: auto;
+                bottom: 5%;
+                width: 50px;
+                height: 25px
+            }
+        </style>
+
+        
+    </head>
+    
+    <body>
+        
+        <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header
+                    mdl-layout--fixed-tabs">
+            <header class="mdl-layout__header">
+                <div class="mdl-layout__header-row">
+                    <span class="mdl-layout-title">NEW RUN</span>
+
+                    <div class="mdl-layout-spacer"></div>
+                  <!-- Navigation -->
+                    <nav class="mdl-navigation">
+                        <a class="mdl-navigation__link" href="index.html">Home</a>
+                        <a class="mdl-navigation__link" href="view.html">Run History</a>
+                    </nav>
+                </div>
+            </header>
+            <div id="wrapper" class='map_overlay'>
+                <div id="start_Record">
+                     <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"   onclick="startRun()" id="startButton">
+                         START RUN
+                     </button>
+                </div>
+                <div id="map"></div>
+            </div>
+        </div>
+        
+        <script src="https://maps.googleapis.com/maps/api/js?v=3&amp;key=&amp;callback=initialize">
+    </script>
+        
+        <script>
+            //Initialized state of recording page
+            function initialize() {
+                var options =
+                {
+                    zoom: 17,
+                    center: new google.maps.LatLng(-37.9120467, 145.1343136),
+                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                    disableDefaultUI: true
+                };
+                var map = new google.maps.Map(document.getElementById("map"), options);
+                
+                var positionMarker = new google.maps.Marker(
+                    {
+                    position: {lat: -37.9120467, lng: 145.1343136},
+                    map: map, 	
+                    });
+                
+                if (navigator.geolocation) {
+                    
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        
+                        var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+                        var initialmarker = new google.maps.Marker({
+                            
+                            position: pos,
+                            title: "Starting Point"
+                        });
+                        currentMarker = new google.maps.Marker({
+                            
+                            position: pos,
+                            title: "Current Point"
+                        });
+                        
+
+                        initialmarker.setMap(map)
+
+                    })
+
+                };
+            }
+            window.onload = initialize;
+            
+            //----------------------------------------------------------------------------------------------
+            //Defining Variables for the recording button and section
+            
+            
+            function startRun() {
+                watchId = navigator.geolocation.watchPosition(myPos);
+            }
+
+            function myPos(pos) {
+
+                var currentPos = {
+                    
+                    lat: pos.coords.latitude,
+                    lng: pos.coords.longitude
+                };
+
+                coordinates.push(currentPos);
+
+                currentMarker.setPosition(currentPos);
+
+                var Path = new google.maps.Polyline({
+                    
+                    path: coordinates,
+                    geodesic: true,
+                    strokeColor: '#FF0000',
+                    strokeOpacity: 1.0,
+                    strokeWeight: 2
+
+                });
+                Path.setMap(map);
+                currentMarker.setMap(map);
+                map.setCenter(currentPos);
+            }
+            
+            
+            
+        </script>
+        
+    </body>
+</html>
